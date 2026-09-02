@@ -1,5 +1,10 @@
 # zenpy-release-poc
 
+> ⚠️ **This is NOT a real package. Do not `pip install` it.** It is a
+> throwaway proof-of-concept published to real PyPI only to test a release
+> automation workflow. It does nothing useful and will not be maintained or
+> updated for actual use.
+
 Minimal proof-of-concept for the release-automation approach proposed for
 [facetoe/zenpy#692](https://github.com/facetoe/zenpy/pull/692#issuecomment-5451069842):
 a GitHub Actions workflow that publishes to PyPI via Trusted Publishing
