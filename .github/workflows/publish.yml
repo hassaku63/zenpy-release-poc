@@ -1,14 +1,14 @@
-name: Publish to Test PyPI
+name: Publish to PyPI
 
 # PoC for the zenpy release-automation approach:
 # https://github.com/facetoe/zenpy/pull/692#issuecomment-5451069842
 #
 # Triggered when a GitHub Release is published. Builds the sdist/wheel and
-# uploads them to *Test* PyPI using Trusted Publishing (OIDC) - no API
-# token stored as a repo secret.
+# uploads them to PyPI using Trusted Publishing (OIDC) - no API token
+# stored as a repo secret.
 #
-# One-time setup required on Test PyPI:
-#   https://test.pypi.org/manage/account/publishing/
+# One-time setup required on PyPI:
+#   https://pypi.org/manage/account/publishing/
 #   Add a pending publisher with:
 #     PyPI project name: zenpy-release-poc
 #     Owner:              hassaku63
@@ -54,9 +54,7 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build
 
-      - name: Publish to Test PyPI
+      - name: Publish to PyPI
         # Pinned to v1.14.2 by commit SHA rather than the release/v1 tag,
         # since a floating tag could be repointed to malicious content.
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
-        with:
-          repository-url: https://test.pypi.org/legacy/
