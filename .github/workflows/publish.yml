@@ -19,6 +19,16 @@ name: Publish to PyPI
 #     Repository:         zenpy-release-poc
 #     Workflow:            publish.yml
 #     Environment:         (leave blank)
+#
+# To point this at Test PyPI instead:
+#   1. Register a separate (pending) publisher on Test PyPI - it's a fully
+#      independent account/trust setup from production PyPI, so the setup
+#      above doesn't carry over:
+#      https://test.pypi.org/manage/account/publishing/ (same owner/repo/
+#      workflow/environment values as above)
+#   2. Add `repository-url: https://test.pypi.org/legacy/` to the "Publish
+#      to PyPI" step's `with:` block below - that's the only code change
+#      needed, since it's unset (defaults to production PyPI) today.
 
 on:
   release:
@@ -86,3 +96,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
         with:
           skip-existing: true
+          # To publish to Test PyPI instead, uncomment (and register a
+          # matching Trusted Publisher on test.pypi.org - see header comment):
+          # repository-url: https://test.pypi.org/legacy/
