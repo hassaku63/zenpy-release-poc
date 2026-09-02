@@ -1,0 +1,55 @@
+name: Publish to Test PyPI
+
+# PoC for the zenpy release-automation approach:
+# https://github.com/facetoe/zenpy/pull/692#issuecomment-5451069842
+#
+# Triggered when a GitHub Release is published. Builds the sdist/wheel and
+# uploads them to *Test* PyPI using Trusted Publishing (OIDC) - no API
+# token stored as a repo secret.
+#
+# One-time setup required on Test PyPI:
+#   https://test.pypi.org/manage/account/publishing/
+#   Add a pending publisher with:
+#     PyPI project name: zenpy-release-poc
+#     Owner:              hassaku63
+#     Repository:         zenpy-release-poc
+#     Workflow:            publish.yml
+#     Environment:         (leave blank)
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # required for PyPI Trusted Publishing
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Verify release tag matches package version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME}"
+          PKG_VERSION="$(python -c "import re; print(re.search(r'__version__ = \"(.*?)\"', open('zenpy_release_poc/__init__.py').read()).group(1))")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Release tag ($TAG_VERSION) does not match zenpy_release_poc/__version__ ($PKG_VERSION)."
+            exit 1
+          fi
+
+      - name: Install build tool
+        run: pip install build
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
